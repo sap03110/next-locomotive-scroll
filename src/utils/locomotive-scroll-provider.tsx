@@ -48,10 +48,22 @@ const LocomotiveScrollProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new ResizeObserver(() => {
+      window.dispatchEvent(new Event('resize'));
+    });
+    observer.observe(containerRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
     if (!scroll) return;
 
     // 페이지 이동시 초기화 처리
-    window.dispatchEvent(new Event('resize'));
     scroll?.scrollTo(0, { duration: 0 });
   }, [path, scroll]);
 
